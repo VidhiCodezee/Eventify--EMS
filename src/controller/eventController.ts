@@ -6,6 +6,7 @@ import { error } from 'console';
 export type EventParams = {
   id: number;
   userId: number;
+  // created_by: number;
 }
 export type ErrorResponse = {
   message: string;
@@ -24,12 +25,17 @@ export const createEvent = async ( req: Request<EventParams>,
   }
 };
 
-export const getEvents = async (req: Request, res: Response) => {
+export const getEvents = async (req: Request<EventParams>, res: Response) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
   const page = parseInt(req.query.page as string) || 1;
   const limit = 10;
   const offset = (page - 1) * limit;
 
-  const events = await Event.findAndCountAll({ offset, limit, order: [['start_time', 'ASC']] });
+  const events = await Event.findAndCountAll({ where: { created_by: userId }, offset, limit, order: [['start_time', 'ASC']] });
   res.json({
     total: events.count,
     page,
