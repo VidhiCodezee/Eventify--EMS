@@ -7,7 +7,7 @@ const eventRouter = express.Router();
 eventRouter.use(authMiddleware);
 
 eventRouter.post('/',authMiddleware, createEvent);
-eventRouter.get('/view',authMiddleware,getEvents);
+eventRouter.get('/view',authMiddleware, getEvents as (req: express.Request<EventParams>, res: express.Response<ErrorResponse | Event>) => void);
 eventRouter.put('/:id',authMiddleware, updateEvent as (req: express.Request<EventParams>, res: express.Response<ErrorResponse | Event>) => void);
 eventRouter.delete('/:id',authMiddleware, deleteEvent  as (req: express.Request<EventParams>, res: express.Response<ErrorResponse | Event>) => void);
 
